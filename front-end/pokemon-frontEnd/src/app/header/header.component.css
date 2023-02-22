@@ -1,0 +1,27 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ef5350;
+    color: #fff;
+    padding: 1rem;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.menu ul {
+    list-style: none;
+    display: flex;
+}
+
+.menu li:not(:last-child) {
+    margin-right: 1rem;
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+}
+
