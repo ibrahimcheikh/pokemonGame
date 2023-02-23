@@ -70,6 +70,7 @@ export class PlayerformComponent implements OnInit {
     return this.pokemonList.find(pokemon => pokemon.name === name);
   }
   onSubmit() {
+
     const playerName = this.playerForm.get('playerName')?.value
     const pokemonName = this.playerForm.get('pokemonName')?.value;
     let player: Player = {
@@ -80,6 +81,7 @@ export class PlayerformComponent implements OnInit {
         (player: Player) => {
           this.player = player
           this.playerList.push(this.player);
+          this.playerNumber++;
           this.playerForm.reset();
         },
         (error: HttpErrorResponse) => {
