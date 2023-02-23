@@ -45,6 +45,7 @@ export class PlayerformComponent implements OnInit {
   }
 
   public start(){
+    console.log("this.playerList.length==2 ",this.playerList.length==2)
     if(this.playerList.length==2){
       this.pokemonService.startGame(this.playerList).subscribe(
         (battle: Battle) => {
