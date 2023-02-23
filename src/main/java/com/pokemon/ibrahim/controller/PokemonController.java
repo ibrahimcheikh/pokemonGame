@@ -33,8 +33,8 @@ public class PokemonController {
     }
 
     @PostMapping("/start")
-    public ResponseEntity<Battle> startGame(@RequestBody List<Player> players,Battle battle) {
-        battle = pokemonService.start(players);
+    public ResponseEntity<Battle> startGame(@RequestBody List<Player> players) {
+        Battle battle = pokemonService.start(players);
         return ResponseEntity.ok(battle);
     }
 }

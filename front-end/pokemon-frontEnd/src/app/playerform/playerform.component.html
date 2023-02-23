@@ -30,8 +30,10 @@
   
 
 
-    <button type="submit">Ready!</button>
-    <button type="submit" (click)="start()">Start!</button>
+    <button type="submit" [disabled]="playerForm.invalid ? true : null" [ngClass]="{ 'disabled': playerForm.invalid,'darkgrey': playerForm.valid }">Ready!</button>
+{{playerList.length}}
+{{playerList.length!==2? true : null}}
+    <button type="submit" (click)="start()" [disabled]="playerList.length!==2? true : null" [ngClass]="{ 'disabled': playerForm.invalid,'darkgrey': playerForm.valid }">Start!</button>
   </form>
 
 </div>

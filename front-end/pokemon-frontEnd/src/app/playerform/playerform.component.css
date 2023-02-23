@@ -33,20 +33,7 @@ form select {
   color: #666;
 }
 
-form button {
-  background-color: #c61e24;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1.2rem;
-  margin-top: 20px;
-  cursor: pointer;
-}
 
-form button:hover {
-  background-color: #b0191f;
-}
 
 h2 {
   font-size: 36px;
@@ -56,4 +43,33 @@ h2 {
   margin-bottom: 20px;
   text-shadow: 1px 1px 1px #000;
   color: #ffcb05;
+}
+
+button.disabled {
+  background-color: #ccc;
+  color: #eeeeee;
+  background-color: #bdbbbb;
+  color: #666;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+button.darkgrey {
+  background-color: #a48506;
+  color: #666;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  cursor: pointer;
+} 
+
+button.darkgrey:hover {
+  background-color: #ffcb05;
+  color: #666;
 }

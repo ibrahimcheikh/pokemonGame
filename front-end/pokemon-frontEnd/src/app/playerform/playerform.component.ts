@@ -17,7 +17,7 @@ export class PlayerformComponent implements OnInit {
   battle!: Battle;
   pokemonUrl: string | null;
   player!: Player;
-  playerNumber: number = 1;
+  playerNumber: number = 0;
 
   playerForm = this.fb.group({
     playerName: ['', Validators.required],
@@ -45,15 +45,19 @@ export class PlayerformComponent implements OnInit {
   }
 
   public start(){
-    this.pokemonService.startGame(this.playerList).subscribe(
-      (battle: Battle) => {
-        this.battle = battle
-
-      },
-      (error: HttpErrorResponse) => {
-        alert(error.message)
-      }
-    )
+    if(this.playerList.length==2){
+      this.pokemonService.startGame(this.playerList).subscribe(
+        (battle: Battle) => {
+          this.battle = battle
+          this.battle.winner.name == null ? alert("It was a tie no one won!") : alert(this.battle.winner.name)
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message)
+        }
+      )
+      this.playerList=[];
+      console.log("in start method playerlist is ",this.playerList)
+    }
   }
 
   public img(): string {
@@ -70,25 +74,29 @@ export class PlayerformComponent implements OnInit {
     return this.pokemonList.find(pokemon => pokemon.name === name);
   }
   onSubmit() {
-
     const playerName = this.playerForm.get('playerName')?.value
     const pokemonName = this.playerForm.get('pokemonName')?.value;
-    let player: Player = {
-      name: playerName,
-      pokemon: this.pokemonList.find(pokemon => pokemon.name === pokemonName) as Pokemon
+    console.log("this.playerForm.valid",this.playerForm.valid)
+    if (this.playerForm.valid){
+      let player: Player = {
+        name: playerName,
+        pokemon: this.pokemonList.find(pokemon => pokemon.name === pokemonName) as Pokemon
+      }
+        this.pokemonService.createNewPayer(player).subscribe(
+          (player: Player) => {
+            this.player = player
+            this.playerList.push(this.player);
+            this.playerNumber++;
+            this.playerForm.reset();
+          },
+          (error: HttpErrorResponse) => {
+            alert(error.message)
+            this.playerForm.reset()
+          }
+        )
+        console.log("in onSubmit method playerlist is ",this.playerList)
     }
-      this.pokemonService.createNewPayer(player).subscribe(
-        (player: Player) => {
-          this.player = player
-          this.playerList.push(this.player);
-          this.playerNumber++;
-          this.playerForm.reset();
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message)
-          this.playerForm.reset()
-        }
-      )
+ 
 
   }
 }

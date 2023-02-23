@@ -49,7 +49,7 @@ public class PokemonControllerTest {
         players.add(player2);
         Battle expectedBattle = new Battle(players, null);
         when(pokemonService.start(players)).thenReturn(expectedBattle);
-        ResponseEntity<Battle> response = pokemonController.startGame(players, null);
+        ResponseEntity<Battle> response = pokemonController.startGame(players);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBattle, response.getBody());
         verify(pokemonService, times(1)).start(players);
