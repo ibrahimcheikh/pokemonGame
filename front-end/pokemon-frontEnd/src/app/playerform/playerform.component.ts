@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, SecurityContext } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Battle } from '../Battle';
 import { Player } from '../Player';
@@ -23,7 +23,7 @@ export class PlayerformComponent implements OnInit {
     playerName: ['', Validators.required],
     pokemonName: ['', Validators.required],
   });
-  constructor(private pokemonService: PokemonService, private fb: FormBuilder, private sanitizer: DomSanitizer) {
+  constructor(private pokemonService: PokemonService, private fb: UntypedFormBuilder, private sanitizer: DomSanitizer) {
     this.pokemonUrl = "";
   }
 
