@@ -18,4 +18,7 @@ public class Pokemon {
     @JsonProperty("url")
     private String url;
 
+    public void takeDamage(int damage) {
+        this.health = Math.max(0, this.health - damage);
+    }
 }

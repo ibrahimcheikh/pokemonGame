@@ -1,5 +1,5 @@
 <div>
-  <h2>Enter Player Details</h2>
+  <h2>Enter Player {{playerNumber}} Details</h2>
   <form [formGroup]="playerForm" (ngSubmit)="onSubmit()">
     <div>
       <label for="playerName">Player Name:</label>
@@ -9,10 +9,12 @@
       </div>
     </div>
     <div>
+
       <label for="pokemon">Choose a Pokemon:</label>
-      <select id="pokemon" formControlName="chosenPokemon">
+      <select id="pokemon" formControlName="pokemonName">
         <option value="">Select a Pokemon</option>
-        <option *ngFor="let pokemon of pokemonList" [value]="pokemon">
+        <option *ngFor="let pokemon of pokemonList" [value]="pokemon.name">
+      
           Name:{{ pokemon.name }}
           <br>
           Height:{{pokemon.height}}
@@ -20,22 +22,19 @@
           Weigh: {{pokemon.weight}}
         </option>
       </select>
-      <div *ngIf="playerForm.get('chosenPokemon')?.invalid && playerForm.get('chosenPokemon')?.touched" class="error">
+
+      <div *ngIf="playerForm.get('pokemonName')?.invalid && playerForm.get('pokemonName')?.touched" class="error">
         Please select a Pokemon
       </div>
     </div>
+  
 
 
-    <!-- <div class="pokemon-details">
-    <img [src]="selectedPokemonUrl" alt="" *ngIf="selectedPokemonUrl">
-    <div *ngIf="selectedPokemonUrl">
-      <strong>Name:</strong> {{ playerForm.get('chosenPokemon')?.value?.name }}
-      <br>
-      <strong>Height:</strong> {{ playerForm.get('chosenPokemon')?.value?.height }}
-      <br>
-      <strong>Weight:</strong> {{ playerForm.get('chosenPokemon')?.value?.weight }}
-    </div>
-  </div> -->
-    <button type="submit" [disabled]=!playerForm.invalid>Ready!</button>
+    <button type="submit">Ready!</button>
+    <button type="submit" (click)="start()">Start!</button>
   </form>
+
+</div>
+<div>
+  <img [src]="'{{getSafeImageUrl()}}'">
 </div>

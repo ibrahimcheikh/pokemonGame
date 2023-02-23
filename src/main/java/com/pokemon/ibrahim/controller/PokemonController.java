@@ -1,6 +1,7 @@
 package com.pokemon.ibrahim.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.pokemon.ibrahim.model.Battle;
 import com.pokemon.ibrahim.model.Player;
 import com.pokemon.ibrahim.model.Pokemon;
 import com.pokemon.ibrahim.service.PokemonService;
@@ -30,6 +31,12 @@ public class PokemonController {
     @PostMapping("/players/add")
     public ResponseEntity<Player> createNewPayer (@RequestBody Player player){
         return ResponseEntity.status(HttpStatus.CREATED).body(player);
+    }
+
+    @PostMapping("/start")
+    public ResponseEntity<Battle> startGame(@RequestBody List<Player> players) {
+        Battle battle = pokemonService.start(players);
+        return ResponseEntity.ok(battle);
     }
 
 
