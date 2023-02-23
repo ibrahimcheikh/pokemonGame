@@ -136,6 +136,19 @@ public class PokemonService {
         Battle battle = new Battle(players,null);
         Random rand = new Random();
         int firstPlayer = this.chooseFirstPlayer();
+        // Handle empty player list
+        if (players == null || players.isEmpty()) {
+            sb.append("\n***************The battle cannot start without players !!!**********************\n");
+            System.out.println(sb.toString());
+            return null;
+        }
+
+        // Handle single player list
+        if (players.size() == 1) {
+            sb.append("\n***************The battle cannot start with only one player !!!**********************\n");
+            System.out.println(sb.toString());
+            return null;
+        }
         Player player1 = battle.getPlayers().get(firstPlayer);
         Player player2 = battle.getPlayers().get(1 - firstPlayer);
         int turnsCount = 0;
@@ -147,13 +160,17 @@ public class PokemonService {
             if (player1.getWonRounds() == 2 || player2.getWonRounds() == 2) {
                 Player winner = player1.getWonRounds() == 2 ? player1 : player2;
                 battle.setWinner(winner);
-                sb.append("******THE GAME HAS ENDED AND THE WINNER OF THIS GAME is " + winner.getName() + "\n");
+                sb.append("*************************************************************");
+                sb.append("\n******THE GAME HAS ENDED AND THE WINNER OF THIS GAME is " + winner.getName() + "\n");
+                sb.append("*************************************************************");
                 break;
             }
             //If one of the players only won one game and we dont have anymore rounds aka
             //No one won
             if (player1.getWonRounds() < 2 && player2.getWonRounds() < 2 && rounds == 1) {
-                sb.append("******THE GAME HAS ENDED ,NO ONE WAS ABLE TO WIN 2/3 ROUNDS \n");
+                sb.append("*************************************************************");
+                sb.append("\n******THE GAME HAS ENDED ,NO ONE WAS ABLE TO WIN 2/3 ROUNDS \n");
+                sb.append("*************************************************************");
                 break;
             }
         }

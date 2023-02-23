@@ -50,7 +50,7 @@ export class PlayerformComponent implements OnInit {
       this.pokemonService.startGame(this.playerList).subscribe(
         (battle: Battle) => {
           this.battle = battle
-          this.battle.winner.name == null ? alert("It was a tie no one won!") : alert(this.battle.winner.name)
+          this.battle.winner == null ? alert("It was a tie no one won!") : alert(this.battle.winner.name)
         },
         (error: HttpErrorResponse) => {
           alert(error.message)

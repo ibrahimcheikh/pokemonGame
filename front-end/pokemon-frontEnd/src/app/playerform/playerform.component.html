@@ -1,42 +1,37 @@
-<div>
-  <h2>Enter Player {{playerNumber}} Details</h2>
+<div class="form-group">
   <form [formGroup]="playerForm" (ngSubmit)="onSubmit()">
-    <div>
-      <label for="playerName">Player Name:</label>
-      <input type="text" id="playerName" formControlName="playerName">
-      <div *ngIf="playerForm.get('playerName')?.invalid && playerForm.get('playerName')?.touched" class="error">
-        Please enter a valid player name
+    <h2>Enter Player {{playerNumber}} Details</h2>
+    <div class="row">
+      <div class="col">
+        <label for="playerName">Player Name:</label>
+        <input type="text" id="playerName" formControlName="playerName" class="form-control">
+        <div *ngIf="playerForm.get('playerName')?.invalid && playerForm.get('playerName')?.touched" class="error">
+          Please enter a valid player name
+        </div>
+      </div>
+      <div class="row">
+        <label for="pokemon">Choose a Pokemon:</label>
+        <ng-select [items]="pokemonList" bindValue="name" bindLabel="name" placeholder="Select a Pokemon"
+          formControlName="pokemonName">
+          <ng-template let-pokemon="item">
+            Name: {{ pokemon.name }}
+            <br>
+            Height: {{pokemon.height}}
+            <br>
+            Weight: {{pokemon.weight}}
+          </ng-template>
+        </ng-select>
+        <div *ngIf="playerForm.get('pokemonName')?.invalid && playerForm.get('pokemonName')?.touched" class="error">
+          Please select a Pokemon
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <button type="submit" [disabled]="playerForm.invalid ? true : null"
+            [ngClass]="{ 'disabled': playerForm.invalid,'darkgrey': playerForm.valid }">Ready!</button>
+          <button type="submit" (click)="start()" [disabled]="playerList.length!==2? true : null"
+            [ngClass]="{ 'disabled': playerList.length!==2,'darkgrey': playerForm.valid && playerList.length===2}">Start!</button>
+        </div>
       </div>
     </div>
-    <div>
-
-      <label for="pokemon">Choose a Pokemon:</label>
-      <select id="pokemon" formControlName="pokemonName">
-        <option value="">Select a Pokemon</option>
-        <option *ngFor="let pokemon of pokemonList" [value]="pokemon.name">
-      
-          Name:{{ pokemon.name }}
-          <br>
-          Height:{{pokemon.height}}
-          <br>
-          Weigh: {{pokemon.weight}}
-        </option>
-      </select>
-
-      <div *ngIf="playerForm.get('pokemonName')?.invalid && playerForm.get('pokemonName')?.touched" class="error">
-        Please select a Pokemon
-      </div>
-    </div>
-  
-
-
-    <button type="submit" [disabled]="playerForm.invalid ? true : null" [ngClass]="{ 'disabled': playerForm.invalid,'darkgrey': playerForm.valid }">Ready!</button>
-    {{playerList.length}}
-    {{playerList.length!==2? true : null}}
-    <button type="submit" (click)="start()" [disabled]="playerList.length!==2? true : null" [ngClass]="{ 'disabled': playerList.length!==2,'darkgrey': playerForm.valid }">Start!</button>
   </form>
-
-</div>
-<div>
-  <img [src]="'{{getSafeImageUrl()}}'">
-</div>

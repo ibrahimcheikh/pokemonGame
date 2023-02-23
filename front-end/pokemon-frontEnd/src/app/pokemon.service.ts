@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Battle } from './Battle';
 import { Player } from './Player';
@@ -14,14 +14,14 @@ export class PokemonService {
   constructor(private http: HttpClient) { }
 
   public getAllPokemons(): Observable<Pokemon[]> {
-    return this.http.get<Pokemon[]>(`${this.api}/pokemons`);
+    return this.http.get<Pokemon[]>(`${this.api}/pokemons`).pipe(shareReplay({bufferSize: 1, refCount: true}));
   }
 
   public createNewPayer(player: Player): Observable<Player> {
-    return this.http.post<Player>(`${this.api}/players/add`, player);
+    return this.http.post<Player>(`${this.api}/players/add`, player).pipe(shareReplay({bufferSize: 1, refCount: true}));
   }
 
   public startGame(player: Player[]): Observable<Battle> {
-    return this.http.post<Battle>(`${this.api}/start`, player);
+    return this.http.post<Battle>(`${this.api}/start`, player).pipe(shareReplay({bufferSize: 1, refCount: true}));
   }
 }
