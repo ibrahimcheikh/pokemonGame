@@ -72,9 +72,9 @@ public class PokemonService {
         while ( battle.getWinner() == null) {
             turnsCount++;
             // Player 1 attacks
-            sb.append("*************** Player " + player1.getName() + " attacks Player " + player2.getName() + "\n");
+            sb.append("\nPlayer " + player1.getName() + " attacks Player " + player2.getName() + "\n");
             player2.getPokemon().takeDamage(normalAttack());
-            sb.append("***************Player " + player2.getName() + " [health]:" + player2.getPokemon().getHealth() + "\n");
+            sb.append("\nPlayer " + player2.getName() + " [health]:" + player2.getPokemon().getHealth() + "\n");
             //If player 2 looses
             if (player2.getPokemon().getHealth() <= 0) {
                 //Reset
@@ -82,13 +82,13 @@ public class PokemonService {
                 this.resetHealth(player1);
                 this.resetHealth(player2);
                 turnsCount=0;
-                sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player1.getName() + "\n");
+                sb.append("\nTHE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player1.getName() + "\n");
                 break;
             }
             // Player 2 attacks
-            sb.append("*************** Player " + player2.getName() + " attacks Player " + player1.getName() + "\n");
+            sb.append("\nPlayer " + player2.getName() + " attacks Player " + player1.getName() + "\n");
             player1.getPokemon().takeDamage(normalAttack());
-            sb.append("***************Player " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
+            sb.append("\nPlayer " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
             if (player1.getPokemon().getHealth() <= 0) {
                 player2.setWonRounds(player2.getWonRounds() + 1);
                 //Reset
@@ -100,9 +100,9 @@ public class PokemonService {
             }
             // Check if special attack is available for Player 1
             if (turnsCount % 2 == 1 && player1.getPokemon().getHealth() > 0) {
-                sb.append("***************Player " + player1.getName() +" is launching [SPECIAL ATTACK]\n");
+                sb.append("\nPlayer " + player1.getName() +" is launching [SPECIAL ATTACK]\n");
                 player2.getPokemon().takeDamage(specialAttack());
-                sb.append("***************Player " + player2.getName() + "[health]:" + player2.getPokemon().getHealth() + "\n");
+                sb.append("\nPlayer " + player2.getName() + "[health]:" + player2.getPokemon().getHealth() + "\n");
                 if (player2.getPokemon().getHealth() <= 0) {
                     player1.setWonRounds(player1.getWonRounds() + 1);
                     //Reset
@@ -115,9 +115,9 @@ public class PokemonService {
             }
             // Check if special attack is available for Player 2
             if (turnsCount % 2 == 1 && player2.getPokemon().getHealth() > 0) {
-                sb.append("***************Player " + player2.getName() +" is launching [SPECIAL ATTACK]\n");
+                sb.append("\nPlayer " + player2.getName() +" is launching [SPECIAL ATTACK]\n");
                 player1.getPokemon().takeDamage(specialAttack());
-                sb.append("***************Player " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
+                sb.append("\nPlayer " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
                 if (player1.getPokemon().getHealth() <= 0) {
                     player2.setWonRounds(player2.getWonRounds() + 1);
                     //Reset
@@ -138,14 +138,14 @@ public class PokemonService {
         int firstPlayer = this.chooseFirstPlayer();
         // Handle empty player list
         if (players == null || players.isEmpty()) {
-            sb.append("\n***************The battle cannot start without players !!!**********************\n");
+            sb.append("\nThe battle cannot start without players !!!**********************\n");
             System.out.println(sb.toString());
             return null;
         }
 
         // Handle single player list
         if (players.size() == 1) {
-            sb.append("\n***************The battle cannot start with only one player !!!**********************\n");
+            sb.append("\nThe battle cannot start with only one player !!!**********************\n");
             System.out.println(sb.toString());
             return null;
         }
@@ -153,24 +153,24 @@ public class PokemonService {
         Player player2 = battle.getPlayers().get(1 - firstPlayer);
         int turnsCount = 0;
         int rounds = 3;
-        sb.append("\n***************The battle has started !!!**********************\n");
+        sb.append("\n**The battle has started !!!***\n");
         while (rounds > 0 ) {
             this.handleRounds(player1, player2, sb,turnsCount,battle);
             rounds--;
             if (player1.getWonRounds() == 2 || player2.getWonRounds() == 2) {
                 Player winner = player1.getWonRounds() == 2 ? player1 : player2;
                 battle.setWinner(winner);
-                sb.append("*************************************************************");
+                sb.append("**");
                 sb.append("\n******THE GAME HAS ENDED AND THE WINNER OF THIS GAME is " + winner.getName() + "\n");
-                sb.append("*************************************************************");
+                sb.append("**");
                 break;
             }
             //If one of the players only won one game and we dont have anymore rounds aka
             //No one won
             if (player1.getWonRounds() < 2 && player2.getWonRounds() < 2 && rounds == 1) {
-                sb.append("*************************************************************");
+                sb.append("**");
                 sb.append("\n******THE GAME HAS ENDED ,NO ONE WAS ABLE TO WIN 2/3 ROUNDS \n");
-                sb.append("*************************************************************");
+                sb.append("**");
                 break;
             }
         }

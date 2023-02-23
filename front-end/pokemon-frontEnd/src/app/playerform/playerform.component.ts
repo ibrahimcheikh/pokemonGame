@@ -1,11 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, SecurityContext } from '@angular/core';
 import { UntypedFormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Battle } from '../Battle';
 import { Player } from '../Player';
 import { Pokemon } from '../Pokemon';
 import { PokemonService } from '../pokemon.service';
+import { WinnerModalComponent } from '../winner-modal/winner-modal.component';
 @Component({
   selector: 'app-playerform',
   templateUrl: './playerform.component.html',
@@ -23,7 +25,7 @@ export class PlayerformComponent implements OnInit {
     playerName: ['', Validators.required],
     pokemonName: ['', Validators.required],
   });
-  constructor(private pokemonService: PokemonService, private fb: UntypedFormBuilder, private sanitizer: DomSanitizer) { }
+  constructor(private pokemonService: PokemonService, private fb: UntypedFormBuilder, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.getPokemons();
@@ -47,15 +49,27 @@ export class PlayerformComponent implements OnInit {
         (battle: Battle) => {
           this.battle = battle
           this.battleFieldLogs = battle.battleNarrative;
-          this.battle.winner == null ? alert("It was a tie no one won!") : alert("ThE WINNER IS "+this.battle.winner.name)
+          const dialogRef = this.dialog.open(WinnerModalComponent, {
+            width: '600px',
+            data: { winner: this.battle.winner, logs: this.battleFieldLogs }
+          });
+  
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result === 'restart') {
+              //Reset everything 
+              this.start();
+            }
+            else if (result === 'change-pokemon') {
+              // Disable the player name field, but keep the value
+              this.playerForm.controls['playerName'].disable();
+              // Show the Pokemon selection form
+            }
+          });
         },
         (error: HttpErrorResponse) => {
           alert(error.message)
         }
-      )
-      //Reset everything 
-      this.playerList = [];
-      this.battleFieldLogs="";
+      );
     }
   }
 //Find Pokemon by Key name
@@ -95,4 +109,5 @@ export class PlayerformComponent implements OnInit {
     const selectedName = target.value;
     this.selectedPokemon = this.pokemonList.find(pokemon => pokemon.name === selectedName);
   }
+
 }
