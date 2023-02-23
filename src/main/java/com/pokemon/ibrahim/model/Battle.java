@@ -9,7 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Battle {
     List<Player> players = new ArrayList<>();
-    private int currentRound;
     private Player winner;
 
 }

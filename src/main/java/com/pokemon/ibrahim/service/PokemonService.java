@@ -79,83 +79,107 @@ public class PokemonService {
         player.getPokemon().setHealth(20);
     }
 
+    private int chooseFirstPlayer() {
+        Random rand = new Random();
+        return rand.nextDouble() < 0.5 ? 0 : 1;
+    }
+
+    private void handleRounds(Player player1, Player player2, StringBuilder sb,int turnsCount ){
+        while ( this.battle.getWinner() == null) {
+            turnsCount++;
+            // Player 1 attacks
+            sb.append("*************** Player " + player1.getName() + " attacks Player " + player2.getName() + "\n");
+            player2.getPokemon().takeDamage(normalAttack());
+            sb.append("***************Player " + player2.getName() + " [health]:" + player2.getPokemon().getHealth() + "\n");
+            //If player 2 looses
+            if (player2.getPokemon().getHealth() <= 0) {
+                //Reset
+                player1.setWonRounds(player1.getWonRounds() + 1);
+                this.resetHealth(player1);
+                this.resetHealth(player2);
+                turnsCount=0;
+                sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player1.getName() + "\n");
+                break;
+            }
+            // Player 2 attacks
+            sb.append("*************** Player " + player2.getName() + " attacks Player " + player1.getName() + "\n");
+            player1.getPokemon().takeDamage(normalAttack());
+            sb.append("***************Player " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
+            if (player1.getPokemon().getHealth() <= 0) {
+                player2.setWonRounds(player2.getWonRounds() + 1);
+                //Reset
+                this.resetHealth(player1);
+                this.resetHealth(player2);
+                turnsCount=0;
+                sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player2.getName() + "\n");
+                break;
+            }
+            // Check if special attack is available for Player 1
+            if (turnsCount % 2 == 1 && player1.getPokemon().getHealth() > 0) {
+                sb.append("***************Player " + player1.getName() +" is launching [SPECIAL ATTACK]\n");
+                player2.getPokemon().takeDamage(specialAttack());
+                sb.append("***************Player " + player2.getName() + "[health]:" + player2.getPokemon().getHealth() + "\n");
+                if (player2.getPokemon().getHealth() <= 0) {
+                    player1.setWonRounds(player1.getWonRounds() + 1);
+                    //Reset
+                    this.resetHealth(player1);
+                    this.resetHealth(player2);
+                    turnsCount=0;
+                    sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player1.getName() + "\n");
+                    break;
+                }
+            }
+            // Check if special attack is available for Player 2
+            if (turnsCount % 2 == 1 && player2.getPokemon().getHealth() > 0) {
+                sb.append("***************Player " + player2.getName() +" is launching [SPECIAL ATTACK]\n");
+                player1.getPokemon().takeDamage(specialAttack());
+                sb.append("***************Player " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
+                if (player1.getPokemon().getHealth() <= 0) {
+                    player2.setWonRounds(player2.getWonRounds() + 1);
+                    //Reset
+                    this.resetHealth(player1);
+                    this.resetHealth(player2);
+                    turnsCount=0;
+                    sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player2.getName() + "\n");
+                    break;
+                }
+            }
+        }
+
+    }
+
+
+
     public Battle start(List<Player> players) {
         StringBuilder sb = new StringBuilder();
-        this.battle = new Battle(players, 3, null);
-        Player player1 = battle.getPlayers().get(0);
-        Player player2 = battle.getPlayers().get(1);
+        this.battle = new Battle(players,null);
+        Random rand = new Random();
+        int firstPlayer = this.chooseFirstPlayer();
+        Player player1 = battle.getPlayers().get(firstPlayer);
+        Player player2 = battle.getPlayers().get(1 - firstPlayer);
         int turnsCount = 0;
         int rounds = 3;
         sb.append("\n***************The battle has started !!!**********************\n");
         while (rounds > 0 ) {
-            while ( this.battle.getWinner() == null) {
-                turnsCount++;
-                // Player 1 attacks
-                sb.append("*************** Player " + player1.getName() + " attacks Player " + player2.getName() + "\n");
-                player2.getPokemon().takeDamage(normalAttack());
-                sb.append("***************Player " + player2.getName() + " [health]:" + player2.getPokemon().getHealth() + "\n");
-                //If player 2 looses
-                if (player2.getPokemon().getHealth() <= 0) {
-                    //reset pokemon healths and rounds
-                    player1.setWonRounds(player1.getWonRounds() + 1);
-                    this.resetHealth(player1);
-                    this.resetHealth(player2);
-                    sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player1.getName() + "\n");
-                    break;
-                }
-                // Player 2 attacks
-                sb.append("*************** Player " + player2.getName() + " attacks Player " + player1.getName() + "\n");
-                player1.getPokemon().takeDamage(normalAttack());
-                sb.append("***************Player " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
-                if (player1.getPokemon().getHealth() <= 0) {
-                    player2.setWonRounds(player2.getWonRounds() + 1);
-                    this.resetHealth(player1);
-                    this.resetHealth(player2);
-                    sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player2.getName() + "\n");
-                    break;
-                }
-                // Check if special attack is available for Player 1
-                if (turnsCount % 2 == 0 && player1.getPokemon().getHealth() > 0) {
-                    sb.append("***************Player " + player1.getName() +" is launching [SPECIAL ATTACK]\n");
-                    player2.getPokemon().takeDamage(specialAttack());
-                    sb.append("***************Player " + player2.getName() + "[health]:" + player2.getPokemon().getHealth() + "\n");
-                    if (player2.getPokemon().getHealth() <= 0) {
-                        player1.setWonRounds(player1.getWonRounds() + 1);
-                        this.resetHealth(player1);
-                        this.resetHealth(player2);
-                        sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player1.getName() + "\n");
-                        break;
-                    }
-                }
-                // Check if special attack is available for Player 2
-                if (turnsCount % 2 == 1 && player2.getPokemon().getHealth() > 0) {
-                    sb.append("***************Player " + player1.getName() +" is launching [SPECIAL ATTACK]\n");
-                    player1.getPokemon().takeDamage(specialAttack());
-                    sb.append("***************Player " + player1.getName() + "[health]:" + player1.getPokemon().getHealth() + "\n");
-                    if (player1.getPokemon().getHealth() <= 0) {
-                        player2.setWonRounds(player2.getWonRounds() + 1);
-                        this.resetHealth(player1);
-                        this.resetHealth(player2);
-                        sb.append("\n******THE ROUND HAS ENDED AND THE WINNER OF THIS ROUND is " + player2.getName() + "\n");
-                        break;
-                    }
-                }
-            }
+            this.handleRounds(player1, player2, sb,turnsCount);
             rounds--;
             if (player1.getWonRounds() == 2 || player2.getWonRounds() == 2) {
                 Player winner = player1.getWonRounds() == 2 ? player1 : player2;
                 battle.setWinner(winner);
                 sb.append("******THE GAME HAS ENDED AND THE WINNER OF THIS GAME is " + winner.getName() + "\n");
                 break;
+
             }
             //If one of the players only won one game and we dont have anymore rounds aka
             //No one won
             if (player1.getWonRounds() < 2 && player2.getWonRounds() < 2 && rounds == 1) {
                 sb.append("******THE GAME HAS ENDED ,NO ONE WAS ABLE TO WIN 2/3 ROUNDS \n");
                 break;
+
             }
+
         }
         System.out.println(sb.toString());
-    return battle;
+    return this.battle;
     }
 }
