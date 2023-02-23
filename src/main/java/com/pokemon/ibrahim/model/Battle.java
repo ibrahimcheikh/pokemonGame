@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class Battle {
-    List<Player> players = new ArrayList<>();
+    List<Player> players;
     private Player winner;
 
 }

@@ -8,11 +8,8 @@ import com.pokemon.ibrahim.model.Battle;
 import com.pokemon.ibrahim.model.Player;
 import com.pokemon.ibrahim.model.Pokemon;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,11 +20,6 @@ public class PokemonService {
     private final PokemonMapper pokemonMapper;
     private final WebClient webClient;
     private String apiUrl = "https://pokeapi.co/api/v2/pokemon?limit=50&offset=0";
-    //In memory storage for players
-    private List<Player> players = new ArrayList<>();
-    private Battle battle;
-    private int specialAttackCounter;
-
     public List<Pokemon> getAllPokemons() throws JsonProcessingException {
         JsonNode jsonNode = webClient.get()
                 .uri(apiUrl)
@@ -57,21 +49,13 @@ public class PokemonService {
         return pokemons;
     }
 
-    public void createNewPlayer(Player player) {
-        players.add(player);
-        System.out.println(player + "player added***");
-        System.out.println(players + "Players added***");
-    }
-
+    // Normal attack damage between 1-10 HP
     public int normalAttack() {
-        // Normal attack damage between 1-10 HP
         return (int) (Math.random() * 10) + 1;
     }
-
+    // Special attack damage between 5-15 HP, takes 2 turns to execute
     public int specialAttack() {
-        // Special attack damage between 5-15 HP, takes 2 turns to execute
         int damage = (int) (Math.random() * 11) + 5;
-        this.specialAttackCounter = 0;
         return damage;
     }
 
@@ -79,13 +63,13 @@ public class PokemonService {
         player.getPokemon().setHealth(20);
     }
 
-    private int chooseFirstPlayer() {
+    public int chooseFirstPlayer() {
         Random rand = new Random();
         return rand.nextDouble() < 0.5 ? 0 : 1;
     }
 
-    private void handleRounds(Player player1, Player player2, StringBuilder sb,int turnsCount ){
-        while ( this.battle.getWinner() == null) {
+    public void handleRounds(Player player1, Player player2, StringBuilder sb,int turnsCount ,Battle battle){
+        while ( battle.getWinner() == null) {
             turnsCount++;
             // Player 1 attacks
             sb.append("*************** Player " + player1.getName() + " attacks Player " + player2.getName() + "\n");
@@ -145,14 +129,11 @@ public class PokemonService {
                 }
             }
         }
-
     }
-
-
 
     public Battle start(List<Player> players) {
         StringBuilder sb = new StringBuilder();
-        this.battle = new Battle(players,null);
+        Battle battle = new Battle(players,null);
         Random rand = new Random();
         int firstPlayer = this.chooseFirstPlayer();
         Player player1 = battle.getPlayers().get(firstPlayer);
@@ -161,25 +142,22 @@ public class PokemonService {
         int rounds = 3;
         sb.append("\n***************The battle has started !!!**********************\n");
         while (rounds > 0 ) {
-            this.handleRounds(player1, player2, sb,turnsCount);
+            this.handleRounds(player1, player2, sb,turnsCount,battle);
             rounds--;
             if (player1.getWonRounds() == 2 || player2.getWonRounds() == 2) {
                 Player winner = player1.getWonRounds() == 2 ? player1 : player2;
                 battle.setWinner(winner);
                 sb.append("******THE GAME HAS ENDED AND THE WINNER OF THIS GAME is " + winner.getName() + "\n");
                 break;
-
             }
             //If one of the players only won one game and we dont have anymore rounds aka
             //No one won
             if (player1.getWonRounds() < 2 && player2.getWonRounds() < 2 && rounds == 1) {
                 sb.append("******THE GAME HAS ENDED ,NO ONE WAS ABLE TO WIN 2/3 ROUNDS \n");
                 break;
-
             }
-
         }
         System.out.println(sb.toString());
-    return this.battle;
+        return battle;
     }
 }

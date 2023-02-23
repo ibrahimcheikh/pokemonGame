@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +33,8 @@ public class PokemonController {
     }
 
     @PostMapping("/start")
-    public ResponseEntity<Battle> startGame(@RequestBody List<Player> players) {
-        Battle battle = pokemonService.start(players);
+    public ResponseEntity<Battle> startGame(@RequestBody List<Player> players,Battle battle) {
+        battle = pokemonService.start(players);
         return ResponseEntity.ok(battle);
     }
-
-
 }
