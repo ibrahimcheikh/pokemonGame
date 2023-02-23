@@ -133,7 +133,7 @@ public class PokemonService {
 
     public Battle start(List<Player> players) {
         StringBuilder sb = new StringBuilder();
-        Battle battle = new Battle(players,null);
+        Battle battle = new Battle(players,null,sb);
         Random rand = new Random();
         int firstPlayer = this.chooseFirstPlayer();
         // Handle empty player list

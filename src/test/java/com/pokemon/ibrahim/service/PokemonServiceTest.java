@@ -44,7 +44,7 @@ class PokemonServiceTest {
                 .expectBody()
                 .consumeWith(response -> {
                     // Mock the response from the PokemonMapper
-                    Pokemon expectedPokemon = new Pokemon("bulbasaur", 7, 69, 20, "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png");
+                    Pokemon expectedPokemon = new Pokemon("bulbasaur", 7, 69, 20, "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\"");
                     try {
                         when(pokemonMapper.mapJsonToPokemonEntity(Mockito.anyString())).thenReturn(expectedPokemon);
                     } catch (JsonProcessingException e) {
@@ -76,7 +76,7 @@ class PokemonServiceTest {
     @Test
     void testResetHealth() {
 
-        Pokemon pokemon = new Pokemon("Bulbasaur", 50,100,20,"pokebowl.com");
+        Pokemon pokemon = new Pokemon("Bulbasaur", 50,100,20,"pokebowl.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\"");
         Player player = new Player("Misty", pokemon,0);
         pokemonService.resetHealth(player);
         assertEquals(pokemon.getHealth(), 20);
@@ -90,13 +90,13 @@ class PokemonServiceTest {
 
     @Test
     public void testHandleRounds() {
-        Player player1 = new Player("Ash", new Pokemon("Pikachu", 100,80,20,"batata.com"),0);
-        Player player2 = new Player("Ibrahim", new Pokemon("Dinozor", 69,50,20,"goo.com"),0);
+        Player player1 = new Player("Ash", new Pokemon("Pikachu", 100,80,20,"batata.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
+        Player player2 = new Player("Ibrahim", new Pokemon("Dinozor", 69,50,20,"goo.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
         List<Player>players = new ArrayList<>(2);
         players.add(player1);
         players.add(player2);
-        Battle battle = new Battle(players,null);
         StringBuilder sb = new StringBuilder();
+        Battle battle = new Battle(players,null,sb);
         int turnsCount = 0;
         pokemonService.handleRounds(player1, player2, sb, turnsCount,battle);
         assertTrue(player1.getWonRounds() == 1 || player2.getWonRounds() == 1);
@@ -108,12 +108,13 @@ class PokemonServiceTest {
         //Mock the service
         PokemonService pokemonService = Mockito.mock(PokemonService.class);
         //Preparing the test prerequisites
-        Player player1 = new Player("Ash", new Pokemon("Pikachu", 100,80,20,"batata.com"),0);
-        Player player2 = new Player("Ibrahim", new Pokemon("Dinozor", 69,50,20,"goo.com"),0);
+        Player player1 = new Player("Ash", new Pokemon("Pikachu", 100,80,20,"batata.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
+        Player player2 = new Player("Ibrahim", new Pokemon("Dinozor", 69,50,20,"goo.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
         List<Player>players = new ArrayList<>(2);
         players.add(player1);
         players.add(player2);
-        Battle expectedBattle = new Battle(players, null);
+        StringBuilder sb = new StringBuilder();
+        Battle expectedBattle = new Battle(players, null,sb);
         //Expected a Battle Object to be returned
         when(pokemonService.start(players)).thenReturn(expectedBattle);
         Battle actualBattle = pokemonService.start(players);

@@ -9,5 +9,6 @@ import java.util.List;
 public class Battle {
     List<Player> players;
     private Player winner;
+    private StringBuilder battleNarrative;
 
 }

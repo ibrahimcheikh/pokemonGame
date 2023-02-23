@@ -16,6 +16,7 @@ export class PlayerformComponent implements OnInit {
   pokemonList: Pokemon[] = [];
   selectedPokemon: Pokemon | undefined;
   playerList: Player[] = [];
+  battleFieldLogs:string="";
   battle!: Battle;
   player!: Player;
   playerForm = this.fb.group({
@@ -45,7 +46,8 @@ export class PlayerformComponent implements OnInit {
       this.pokemonService.startGame(this.playerList).subscribe(
         (battle: Battle) => {
           this.battle = battle
-          this.battle.winner == null ? alert("It was a tie no one won!") : alert(this.battle.winner.name)
+          this.battleFieldLogs = battle.battleNarrative;
+          this.battle.winner == null ? alert("It was a tie no one won!") : alert("ThE WINNER IS "+this.battle.winner.name)
         },
         (error: HttpErrorResponse) => {
           alert(error.message)
@@ -53,7 +55,7 @@ export class PlayerformComponent implements OnInit {
       )
       //Reset everything 
       this.playerList = [];
-
+      this.battleFieldLogs="";
     }
   }
 //Find Pokemon by Key name
