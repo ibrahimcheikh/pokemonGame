@@ -11,42 +11,37 @@ import { PokemonService } from '../pokemon.service';
   templateUrl: './playerform.component.html',
   styleUrls: ['./playerform.component.css']
 })
+
 export class PlayerformComponent implements OnInit {
   pokemonList: Pokemon[] = [];
+  selectedPokemon: Pokemon | undefined;
   playerList: Player[] = [];
   battle!: Battle;
-  pokemonUrl: string | null;
   player!: Player;
-  playerNumber: number = 0;
-
   playerForm = this.fb.group({
     playerName: ['', Validators.required],
     pokemonName: ['', Validators.required],
   });
-  constructor(private pokemonService: PokemonService, private fb: UntypedFormBuilder, private sanitizer: DomSanitizer) {
-    this.pokemonUrl = "";
-  }
+  constructor(private pokemonService: PokemonService, private fb: UntypedFormBuilder, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     this.getPokemons();
 
   }
-
+  //Get all pokemons
   public getPokemons() {
     this.pokemonService.getAllPokemons().subscribe(
       (pokemonList: Pokemon[]) => {
         this.pokemonList = pokemonList;
-        console.log(this.pokemonList)
       },
       (error: HttpErrorResponse) => {
         alert(error.message)
       }
     )
   }
-
-  public start(){
-    console.log("this.playerList.length==2 ",this.playerList.length==2)
-    if(this.playerList.length==2){
+  //Start the game when both players are ready 
+  public start() {
+    if (this.playerList.length == 2) {
       this.pokemonService.startGame(this.playerList).subscribe(
         (battle: Battle) => {
           this.battle = battle
@@ -56,48 +51,46 @@ export class PlayerformComponent implements OnInit {
           alert(error.message)
         }
       )
-      this.playerList=[];
-      console.log("in start method playerlist is ",this.playerList)
+      //Reset everything 
+      this.playerList = [];
+
     }
   }
-
-  public img(): string {
-    const name = this.playerForm.get('pokemonName')?.value;
-    const pokemon = this.pokemonList.find(pokemon => pokemon.name === name) as Pokemon
-    console.log(pokemon?.url)
-    return pokemon?.url
-  }
-  public getSafeImageUrl() {
-    const url = this.img();
-    this.pokemonUrl = this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this.sanitizer.bypassSecurityTrustResourceUrl(url))
-  }
+//Find Pokemon by Key name
   findPokemonByName(name: string): Pokemon | undefined {
     return this.pokemonList.find(pokemon => pokemon.name === name);
   }
+  //When player has entered name and his pokemon
   onSubmit() {
     const playerName = this.playerForm.get('playerName')?.value
     const pokemonName = this.playerForm.get('pokemonName')?.value;
-    console.log("this.playerForm.valid",this.playerForm.valid)
-    if (this.playerForm.valid){
+    console.log("this.playerForm.valid", this.playerForm.valid)
+    if (this.playerForm.valid) {
       let player: Player = {
         name: playerName,
         pokemon: this.pokemonList.find(pokemon => pokemon.name === pokemonName) as Pokemon
       }
-        this.pokemonService.createNewPayer(player).subscribe(
-          (player: Player) => {
-            this.player = player
-            this.playerList.push(this.player);
-            this.playerNumber++;
-            this.playerForm.reset();
-          },
-          (error: HttpErrorResponse) => {
-            alert(error.message)
-            this.playerForm.reset()
-          }
-        )
-        console.log("in onSubmit method playerlist is ",this.playerList)
+      this.pokemonService.createNewPayer(player).subscribe(
+        (player: Player) => {
+          this.player = player
+          this.playerList.push(this.player);
+          this.playerForm.reset();
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message)
+          this.playerForm.reset()
+        }
+      )
+      console.log("in onSubmit method playerlist is ", this.playerList)
     }
- 
+    //Reset selection for the next Player 
+    this.selectedPokemon = undefined;
 
+  }
+  //Event listener to find 
+  onSelectPokemon(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const selectedName = target.value;
+    this.selectedPokemon = this.pokemonList.find(pokemon => pokemon.name === selectedName);
   }
 }
