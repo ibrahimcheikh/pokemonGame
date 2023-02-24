@@ -30,7 +30,7 @@
         </div>
         <div class="form-group d-flex justify-content-between mt-4">
           <button type="submit" [disabled]="playerForm.invalid" class="btn btn-warning">Ready!</button>
-          <button type="submit" (click)="start()" [disabled]="playerList.length!==2" class="btn btn-danger">Start The
+          <button type="submit" (click)="start()" [disabled]="playerList.length!==2 && pokemonList.length!==2" class="btn btn-danger">Start The
             GAME</button>
         </div>
       </form>

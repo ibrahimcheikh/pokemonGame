@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,5 +55,24 @@ public class PokemonControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBattle, response.getBody());
         verify(pokemonService, times(1)).start(players);
+    }
+    @Test
+    void testUpdatePlayer() {
+        Player exsistingPlayer = new Player("Ash", new Pokemon("Pikachuuuu", 32,333,20,"batata.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
+        Player updatedPlayer = new Player("Ash", new Pokemon("Charizard", 100,80,20,"batata.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
+        when(pokemonService.updatePlayer("Ash", updatedPlayer)).thenReturn(updatedPlayer);
+        ResponseEntity<Player> response = pokemonController.updatePlayer("Ash", updatedPlayer);
+        verify(pokemonService).updatePlayer("Ash", updatedPlayer);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(updatedPlayer, response.getBody());
+    }
+    @Test
+    void testUpdatePlayerNotFound() {
+        Player updatedPlayer = new Player("Ash", new Pokemon("Pikachu", 100,80,20,"batata.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
+        when(pokemonService.updatePlayer("Ash", updatedPlayer)).thenReturn(null);
+        ResponseEntity<Player> response = pokemonController.updatePlayer("Ash", updatedPlayer);
+        verify(pokemonService).updatePlayer("Ash", updatedPlayer);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
     }
 }

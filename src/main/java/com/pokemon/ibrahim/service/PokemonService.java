@@ -20,7 +20,7 @@ import java.util.Random;
 public class PokemonService {
     private final PokemonMapper pokemonMapper;
     private final WebClient webClient;
-
+    private List<Player> players = new ArrayList<>();
     public List<Pokemon> getAllPokemons() throws JsonProcessingException {
         String apiUrl = "https://pokeapi.co/api/v2/pokemon?limit=50&offset=0";
         JsonNode jsonNode = webClient.get()
@@ -49,6 +49,34 @@ public class PokemonService {
             pokemons.add(pokemon);
         }
         return pokemons;
+    }
+    public List<Player> getAllPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public Player createNewPlayer(Player player) {
+        players.add(player);
+        return player;
+    }
+
+    public Player updatePlayer(String name, Player updatedPlayer) {
+        Player existingPlayer = findPlayerByName(name);
+        if (existingPlayer == null) {
+            return null;
+        }
+        existingPlayer.setPokemon(updatedPlayer.getPokemon());
+        return existingPlayer;
+    }
+
+    public Player findPlayerByName(String name) {
+        return players.stream()
+                .filter(player -> player.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     // Normal attack damage between 1-10 HP

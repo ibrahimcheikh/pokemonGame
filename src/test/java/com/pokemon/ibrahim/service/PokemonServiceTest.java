@@ -4,7 +4,6 @@ import com.pokemon.ibrahim.mapper.PokemonMapper;
 import com.pokemon.ibrahim.model.Battle;
 import com.pokemon.ibrahim.model.Player;
 import com.pokemon.ibrahim.model.Pokemon;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +12,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,6 +28,7 @@ class PokemonServiceTest {
 
     @Autowired
     private PokemonService pokemonService;
+
 
     @Test
     public void testGetAllPokemons() {
@@ -105,7 +104,6 @@ class PokemonServiceTest {
 }
     @Test
     void start_Game_Returns_Battle() {
-        //Mock the service
         PokemonService pokemonService = Mockito.mock(PokemonService.class);
         //Preparing the test prerequisites
         Player player1 = new Player("Ash", new Pokemon("Pikachu", 100,80,20,"batata.com","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png\""),0);
@@ -122,6 +120,29 @@ class PokemonServiceTest {
         assertEquals(expectedBattle, actualBattle);
         //Only the method is called once
         verify(pokemonService, times(1)).start(players);
+    }
+
+    @Test
+    public void testGetAllPlayers() {
+        Player player1 = new Player("Ash", new Pokemon("Pikachu", 100, 80, 20, "batata.com", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"), 0);
+        Player player2 = new Player("Ibrahim", new Pokemon("Dinozor", 69, 50, 20, "goo.com", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"), 0);
+        List<Player> players = Arrays.asList(player1, player2);
+        pokemonService.setPlayers(players);
+        List<Player> result = pokemonService.getAllPlayers();
+        assertEquals(players, result);
+    }
+
+    @Test
+    public void testFindPlayerByName() {
+        List<Player>  players = Arrays.asList(
+                new Player("Ash", new Pokemon("Pikachu", 100, 80, 20, "batata.com", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"), 0),
+                new Player("Ibrahim", new Pokemon("Dinozor", 69, 50, 20, "goo.com", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"), 0)
+        );
+        pokemonService.setPlayers(players);
+        Player result = pokemonService.findPlayerByName("Ibrahim");
+        assertEquals(players.get(1), result);
+        result = pokemonService.findPlayerByName("Brock");
+        assertNull(result);
     }
 
 }

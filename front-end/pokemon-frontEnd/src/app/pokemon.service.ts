@@ -21,7 +21,17 @@ export class PokemonService {
     return this.http.post<Player>(`${this.api}/players/add`, player).pipe(shareReplay({bufferSize: 1, refCount: true}));
   }
 
-  public startGame(player: Player[]): Observable<Battle> {
-    return this.http.post<Battle>(`${this.api}/start`, player).pipe(shareReplay({bufferSize: 1, refCount: true}));
+  public startGame(players: Player[]): Observable<Battle> {
+    return this.http.post<Battle>(`${this.api}/start`, players).pipe(shareReplay({bufferSize: 1, refCount: true}));
   }
+
+  public updatePlayer(playerName: string, player: Player): Observable<Player> {
+    const url = `${this.api}/players/edit/${playerName}`;
+    return this.http.put<Player>(url, player).pipe(shareReplay({bufferSize: 1, refCount: true}));
+  }
+
+  public getAllPlayers(): Observable<Player[]> {
+    return this.http.get<Player[]>(`${this.api}/players/all`).pipe(shareReplay({bufferSize: 1, refCount: true}));
+  }
+
 }

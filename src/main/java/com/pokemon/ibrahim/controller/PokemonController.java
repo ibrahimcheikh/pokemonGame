@@ -27,14 +27,32 @@ public class PokemonController {
         return new ResponseEntity<>(pokemons, HttpStatus.OK);
     }
 
+    @GetMapping("/players/all")
+    public ResponseEntity<List<Player>> getAllPlayers()  {
+        List<Player> players = pokemonService.getAllPlayers();
+        if (players == null) {
+            players = new ArrayList<>();
+        }
+        return new ResponseEntity<>(players, HttpStatus.OK);
+    }
+
     @PostMapping("/players/add")
     public ResponseEntity<Player> createNewPayer (@RequestBody Player player){
-        return ResponseEntity.status(HttpStatus.CREATED).body(player);
+        Player createdPlayer = pokemonService.createNewPlayer(player);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPlayer);
     }
 
     @PostMapping("/start")
     public ResponseEntity<Battle> startGame(@RequestBody List<Player> players) {
         Battle battle = pokemonService.start(players);
         return ResponseEntity.ok(battle);
+    }
+    @PutMapping("/players/edit/{name}")
+    public ResponseEntity<Player> updatePlayer(@PathVariable("name") String name, @RequestBody Player player) {
+        Player updatedPlayer = pokemonService.updatePlayer(name, player);
+        if (updatedPlayer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedPlayer);
     }
 }

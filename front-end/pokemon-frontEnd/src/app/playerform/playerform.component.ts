@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, SecurityContext } from '@angular/core';
 import { UntypedFormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Battle } from '../Battle';
 import { Player } from '../Player';
 import { Pokemon } from '../Pokemon';
@@ -18,8 +17,10 @@ export class PlayerformComponent implements OnInit {
   pokemonList: Pokemon[] = [];
   selectedPokemon: Pokemon | undefined;
   playerList: Player[] = [];
-  battleFieldLogs:string="";
-  isEditMode:boolean = false;
+  battleFieldLogs: string = "";
+  isEditMode: boolean = false;
+  //To keep track of players
+  playerIndex: number = 0;
   battle!: Battle;
   player!: Player;
   playerForm = this.fb.group({
@@ -27,11 +28,10 @@ export class PlayerformComponent implements OnInit {
     pokemonName: ['', Validators.required],
   });
   constructor(private pokemonService: PokemonService, private fb: UntypedFormBuilder, private dialog: MatDialog) { }
-
   ngOnInit(): void {
     this.getPokemons();
-
   }
+
   //Get all pokemons
   public getPokemons() {
     this.pokemonService.getAllPokemons().subscribe(
@@ -43,6 +43,27 @@ export class PlayerformComponent implements OnInit {
       }
     )
   }
+  //Get all Players
+  public getAllPlayers() {
+    this.pokemonService.getAllPlayers().subscribe(
+      (players: Player[]) => {
+        this.playerList = players
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message)
+        this.playerForm.reset()
+      }
+    )
+  }
+
+  //Create a player
+  private createPlayer(name: string, pokemonName: string): Player {
+    return {
+      name: name,
+      pokemon: this.pokemonList.find(pokemon => pokemon.name === pokemonName) as Pokemon
+    };
+  }
+
   //Start the game when both players are ready 
   public start() {
     if (this.playerList.length == 2) {
@@ -54,16 +75,16 @@ export class PlayerformComponent implements OnInit {
             width: '600px',
             data: { winner: this.battle.winner, logs: this.battleFieldLogs }
           });
-  
           dialogRef.afterClosed().subscribe((result) => {
             if (result === 'restart') {
-              //Reset everything 
+              //Call start again to play again
+              this.isEditMode = false;
               this.start();
             }
             else if (result === 'change-pokemon') {
-              // Disable the player name field, but keep the value
-           
-              // Show the Pokemon selection form
+              // Call on submit with isEditMode ==true
+              this.isEditMode = true;
+              this.onSubmit();
             }
           });
         },
@@ -73,48 +94,58 @@ export class PlayerformComponent implements OnInit {
       );
     }
   }
-//Find Pokemon by Key name
-  findPokemonByName(name: string): Pokemon | undefined {
-    return this.pokemonList.find(pokemon => pokemon.name === name);
-  }
-  //When player has entered name and his pokemon
+
+
   onSubmit() {
-    const playerName = this.playerForm.get('playerName')?.value
+    const playerName = this.playerForm.get('playerName')?.value;
     const pokemonName = this.playerForm.get('pokemonName')?.value;
-    console.log("this.playerForm.valid", this.playerForm.valid)
+    //if we didnt press restart
+    // If we're not in edit mode, create a new player
     if (this.playerForm.valid && !this.isEditMode) {
-      let player: Player = {
-        name: playerName,
-        pokemon: this.pokemonList.find(pokemon => pokemon.name === pokemonName) as Pokemon
-      }
+      const player = this.createPlayer(playerName, pokemonName);
       this.pokemonService.createNewPayer(player).subscribe(
-        (player: Player) => {
-          this.player = player
-          this.playerList.push(this.player);
+        (createdPlayer: Player) => {
+          this.playerList.push(createdPlayer);
           this.playerForm.reset();
         },
         (error: HttpErrorResponse) => {
-          alert(error.message)
-          this.playerForm.reset()
+          alert(error.message);
+          this.playerForm.reset();
         }
-      )
-      console.log("in onSubmit method playerlist is ", this.playerList)
+      );
     }
+
+    if (this.isEditMode) {
+      let playerName = this.playerList[this.playerIndex].name;
+      // Setting the player's name and disabling it
+      this.playerForm.get('playerName')?.setValue(playerName);
+      this.playerForm.controls['playerName'].disable();
+      let pokemonName = this.playerForm.get('pokemonName')?.value;
+      // We need to check if the player has chosen a new pokemon
+      if (pokemonName) {
+        const player = this.createPlayer(playerName, pokemonName);
+        this.pokemonService.updatePlayer(player.name, player).subscribe(
+          (updatedPlayer: Player) => {
+            this.player = updatedPlayer;
+            this.playerIndex = (this.playerIndex + 1) % this.playerList.length;
+
+          },
+          (error: HttpErrorResponse) => {
+            alert(error.message);
+            this.playerForm.reset();
+          }
+        );
+      }
+    }
+
     //Reset selection for the next Player 
     this.selectedPokemon = undefined;
   }
 
-  updatePlayerPokemon(){
-    let playerName = this.playerList[0].name;
-    this.playerForm.get('playerName')?.setValue(name);
-    this.playerForm.controls['playerName'].disable();
-
-  }
   //Event listener to find 
   onSelectPokemon(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const selectedName = target.value;
     this.selectedPokemon = this.pokemonList.find(pokemon => pokemon.name === selectedName);
   }
-
 }
