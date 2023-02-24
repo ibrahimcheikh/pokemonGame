@@ -37,7 +37,7 @@ public class PokemonController {
     }
 
     @PostMapping("/players/add")
-    public ResponseEntity<Player> createNewPayer (@RequestBody Player player){
+    public ResponseEntity<Player> createNewPlayer(@RequestBody Player player){
         Player createdPlayer = pokemonService.createNewPlayer(player);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPlayer);
     }
