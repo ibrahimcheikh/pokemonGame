@@ -8,5 +8,5 @@ import lombok.Data;
 public class Player {
     private String name;
     private Pokemon pokemon;
-    private int wonRounds = 0;
+    private int wonRounds;
 }

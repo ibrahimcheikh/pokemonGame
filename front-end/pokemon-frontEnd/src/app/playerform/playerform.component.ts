@@ -19,6 +19,7 @@ export class PlayerformComponent implements OnInit {
   selectedPokemon: Pokemon | undefined;
   playerList: Player[] = [];
   battleFieldLogs:string="";
+  isEditMode:boolean = false;
   battle!: Battle;
   player!: Player;
   playerForm = this.fb.group({
@@ -61,7 +62,7 @@ export class PlayerformComponent implements OnInit {
             }
             else if (result === 'change-pokemon') {
               // Disable the player name field, but keep the value
-              this.playerForm.controls['playerName'].disable();
+           
               // Show the Pokemon selection form
             }
           });
@@ -81,7 +82,7 @@ export class PlayerformComponent implements OnInit {
     const playerName = this.playerForm.get('playerName')?.value
     const pokemonName = this.playerForm.get('pokemonName')?.value;
     console.log("this.playerForm.valid", this.playerForm.valid)
-    if (this.playerForm.valid) {
+    if (this.playerForm.valid && !this.isEditMode) {
       let player: Player = {
         name: playerName,
         pokemon: this.pokemonList.find(pokemon => pokemon.name === pokemonName) as Pokemon
@@ -101,6 +102,12 @@ export class PlayerformComponent implements OnInit {
     }
     //Reset selection for the next Player 
     this.selectedPokemon = undefined;
+  }
+
+  updatePlayerPokemon(){
+    let playerName = this.playerList[0].name;
+    this.playerForm.get('playerName')?.setValue(name);
+    this.playerForm.controls['playerName'].disable();
 
   }
   //Event listener to find 
